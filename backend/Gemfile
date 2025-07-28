@@ -39,3 +39,5 @@ group :development, :test do
 end
 
 gem "mongoid", "~> 9.0"
+
+gem "bcrypt", "~> 3.1"

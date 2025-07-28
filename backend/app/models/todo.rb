@@ -9,6 +9,8 @@ class Todo
   field :deadline,      type: Date
   field :priority,      type: String, default: "low"
   
+  belongs_to :user, inverse_of: :todos, optional: false
+
   STATUSES = %w[pending ongoing completed].freeze
   PRIORITIES = %w[low medium high].freeze
 
