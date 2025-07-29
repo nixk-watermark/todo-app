@@ -142,223 +142,168 @@ export default function Dashboard() {
     const completedTasks = tasks.filter((task) => task.status === "completed")
 
     return (
-      <div className="space-y-6">
-        {/* Welcome Section */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome back, Sundar 👋</h1>
-          <div className="flex items-center space-x-4">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white">
-                  <img
-                    src={`/placeholder.svg?height=32&width=32&query=user ${i}`}
-                    alt={`User ${i}`}
-                    className="w-full h-full rounded-full"
-                  />
-                </div>
-              ))}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* To-Do Section */}
+        <div className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-2xl">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-3">
+              <div className="w-7 h-7 rounded border-2 border-gray-300"></div>
+              <h2 className="text-2xl font-bold text-gray-800">To-Do</h2>
             </div>
-            <Button variant="outline" className="text-red-500 border-red-500 hover:bg-red-50 bg-transparent">
-              <Users className="w-4 h-4 mr-2" />
-              Invite
-            </Button>
+            <div className="flex items-center space-x-6">
+              <span className="text-base text-gray-500">20 June • Today</span>
+              <Button
+                onClick={() => setIsTaskModalOpen(true)}
+                variant="ghost"
+                size="lg"
+                className="text-white bg-[#FF5A5F] hover:bg-[#ff7a7f] rounded-xl px-6 py-2 text-lg font-semibold shadow-md"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Add task
+              </Button>
+            </div>
+          </div>
+          <div className="space-y-6">
+            {todayTasks.map((task) => (
+              <div
+                key={task.id}
+                onClick={() => handleTaskClick(task)}
+                className="bg-white rounded-2xl p-6 shadow-md border-l-4 border-[#FF5A5F] cursor-pointer hover:shadow-xl transition-shadow flex items-center gap-4"
+              >
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-800 mb-2 text-lg">{task.title}</h3>
+                  <p className="text-gray-600 text-base mb-3">{task.description}</p>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-4">
+                      <span className={`px-3 py-1 rounded-full font-semibold ${task.priority === "extreme" ? "bg-red-100 text-red-600" : task.priority === "moderate" ? "bg-blue-100 text-blue-600" : "bg-green-100 text-green-600"}`}>Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
+                      <span className={`px-3 py-1 rounded-full font-semibold ${task.status === "completed" ? "bg-green-100 text-green-600" : task.status === "ongoing" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}>Status: {task.status === "not_started" ? "Not Started" : task.status === "ongoing" ? "In Progress" : "Completed"}</span>
+                    </div>
+                    <span className="text-gray-400">Created on: {task.createdAt}</span>
+                  </div>
+                </div>
+                {task.image && (
+                  <img
+                    src={task.image || "/placeholder.svg"}
+                    alt={task.title}
+                    className="w-20 h-20 rounded-xl object-cover ml-4"
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* To-Do Section */}
-          <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 rounded border-2 border-gray-300"></div>
-                <h2 className="text-xl font-semibold text-gray-800">To-Do</h2>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-500">20 June • Today</span>
-                <Button
-                  onClick={() => setIsTaskModalOpen(true)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-500 hover:bg-red-50"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add task
-                </Button>
-              </div>
+        {/* Task Status Section */}
+        <div className="space-y-8">
+          <div className="bg-white rounded-3xl p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-7 h-7 rounded border-2 border-gray-300"></div>
+              <h2 className="text-2xl font-bold text-gray-800">Task Status</h2>
             </div>
-
-            <div className="space-y-4">
-              {todayTasks.map((task) => (
-                <div
-                  key={task.id}
-                  onClick={() => handleTaskClick(task)}
-                  className="bg-gray-50 rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className="w-6 h-6 rounded-full border-2 border-gray-300 mt-1"></div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-800 mb-2">{task.title}</h3>
-                      <p className="text-gray-600 text-sm mb-3">{task.description}</p>
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center space-x-4">
-                          <span
-                            className={`px-2 py-1 rounded ${
-                              task.priority === "extreme"
-                                ? "bg-red-100 text-red-600"
-                                : task.priority === "moderate"
-                                  ? "bg-blue-100 text-blue-600"
-                                  : "bg-green-100 text-green-600"
-                            }`}
-                          >
-                            Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                          </span>
-                          <span
-                            className={`px-2 py-1 rounded ${
-                              task.status === "completed"
-                                ? "bg-green-100 text-green-600"
-                                : task.status === "ongoing"
-                                  ? "bg-blue-100 text-blue-600"
-                                  : "bg-gray-100 text-gray-600"
-                            }`}
-                          >
-                            Status:{" "}
-                            {task.status === "not_started"
-                              ? "Not Started"
-                              : task.status === "ongoing"
-                                ? "In Progress"
-                                : "Completed"}
-                          </span>
-                        </div>
-                        <span className="text-gray-500">Created on: {task.createdAt}</span>
-                      </div>
-                    </div>
-                    {task.image && (
-                      <img
-                        src={task.image || "/placeholder.svg"}
-                        alt={task.title}
-                        className="w-16 h-16 rounded-lg object-cover"
-                      />
-                    )}
+            <div className="grid grid-cols-3 gap-6 mb-8">
+              <div className="text-center">
+                <div className="relative w-16 h-16 mx-auto mb-2">
+                  <svg className="w-16 h-16 transform -rotate-90">
+                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="8" fill="none" />
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#10b981"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeDasharray={`${stats.completed * 1.76} 176`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg font-bold">{stats.completed}%</span>
                   </div>
                 </div>
-              ))}
+                <div className="flex items-center justify-center space-x-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-600">Completed</span>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="relative w-16 h-16 mx-auto mb-2">
+                  <svg className="w-16 h-16 transform -rotate-90">
+                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="8" fill="none" />
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#3b82f6"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeDasharray={`${stats.inProgress * 1.76} 176`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg font-bold">{stats.inProgress}%</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center space-x-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-sm text-gray-600">In Progress</span>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="relative w-16 h-16 mx-auto mb-2">
+                  <svg className="w-16 h-16 transform -rotate-90">
+                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="8" fill="none" />
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#ef4444"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeDasharray={`${stats.notStarted * 1.76} 176`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg font-bold">{stats.notStarted}%</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center space-x-1">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span className="text-sm text-gray-600">Not Started</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Task Status Section */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border">
-              <div className="flex items-center space-x-2 mb-6">
-                <div className="w-6 h-6 rounded border-2 border-gray-300"></div>
-                <h2 className="text-xl font-semibold text-gray-800">Task Status</h2>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center">
-                  <div className="relative w-16 h-16 mx-auto mb-2">
-                    <svg className="w-16 h-16 transform -rotate-90">
-                      <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="8" fill="none" />
-                      <circle
-                        cx="32"
-                        cy="32"
-                        r="28"
-                        stroke="#10b981"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeDasharray={`${stats.completed * 1.76} 176`}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold">{stats.completed}%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-center space-x-1">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm text-gray-600">Completed</span>
-                  </div>
-                </div>
-
-                <div className="text-center">
-                  <div className="relative w-16 h-16 mx-auto mb-2">
-                    <svg className="w-16 h-16 transform -rotate-90">
-                      <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="8" fill="none" />
-                      <circle
-                        cx="32"
-                        cy="32"
-                        r="28"
-                        stroke="#3b82f6"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeDasharray={`${stats.inProgress * 1.76} 176`}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold">{stats.inProgress}%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-center space-x-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm text-gray-600">In Progress</span>
-                  </div>
-                </div>
-
-                <div className="text-center">
-                  <div className="relative w-16 h-16 mx-auto mb-2">
-                    <svg className="w-16 h-16 transform -rotate-90">
-                      <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="8" fill="none" />
-                      <circle
-                        cx="32"
-                        cy="32"
-                        r="28"
-                        stroke="#ef4444"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeDasharray={`${stats.notStarted * 1.76} 176`}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold">{stats.notStarted}%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-center space-x-1">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span className="text-sm text-gray-600">Not Started</span>
-                  </div>
-                </div>
-              </div>
+          {/* Completed Tasks */}
+          <div className="bg-white rounded-3xl p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-7 h-7 rounded border-2 border-gray-300"></div>
+              <h2 className="text-2xl font-bold text-gray-800">Completed Task</h2>
             </div>
-
-            {/* Completed Tasks */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-6 h-6 rounded border-2 border-gray-300"></div>
-                <h2 className="text-xl font-semibold text-gray-800">Completed Task</h2>
-              </div>
-
-              <div className="space-y-3">
-                {completedTasks.slice(0, 2).map((task) => (
-                  <div key={task.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mt-1">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-800">{task.title}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">Status: Completed</span>
-                        <span className="text-xs text-gray-500">Completed 2 days ago</span>
-                      </div>
-                    </div>
-                    {task.image && (
-                      <img
-                        src={task.image || "/placeholder.svg"}
-                        alt={task.title}
-                        className="w-12 h-12 rounded-lg object-cover"
-                      />
-                    )}
+            <div className="space-y-4">
+              {completedTasks.slice(0, 2).map((task) => (
+                <div key={task.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl shadow-md">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mt-1">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
-                ))}
-              </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-800 text-lg">{task.title}</h4>
+                    <p className="text-base text-gray-600 mt-1">{task.description}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-xs text-green-600 bg-green-100 px-3 py-1 rounded-full font-semibold">Status: Completed</span>
+                      <span className="text-xs text-gray-400">Completed 2 days ago</span>
+                    </div>
+                  </div>
+                  {task.image && (
+                    <img
+                      src={task.image || "/placeholder.svg"}
+                      alt={task.title}
+                      className="w-16 h-16 rounded-xl object-cover ml-4"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -512,48 +457,52 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-[#F7F8FA] flex">
       <Sidebar currentView={currentView} onViewChange={setCurrentView} />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold">
-                <span className="text-red-500">
-                  {currentView === "dashboard" ? "Dash" : currentView === "my-task" ? "To-" : "Task"}
-                </span>
-                <span className="text-gray-800">
-                  {currentView === "dashboard" ? "board" : currentView === "my-task" ? "Do" : "Categories"}
-                </span>
-              </h1>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input placeholder="Search your task here..." className="pl-10 w-80 bg-gray-50 border-gray-200" />
+        <header className="w-full bg-white shadow-md px-0 py-0 sticky top-0 z-10">
+          <div className="flex items-center justify-between max-w-7xl mx-auto px-10 py-4">
+            {/* Left: Logo/Title */}
+            <h1 className="text-3xl font-bold">
+              <span className="text-[#FF5A5F]">Dash</span>
+              <span className="text-gray-800">board</span>
+            </h1>
+            {/* Center: Search */}
+            <div className="flex-1 flex justify-center">
+              <div className="relative w-full max-w-lg">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
+                <Input placeholder="Search your task here..." className="pl-12 pr-4 py-3 rounded-xl bg-[#F7F8FA] border-none shadow-sm text-lg w-full" />
               </div>
             </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon" className="text-gray-500">
-                <Search className="w-5 h-5" />
+            {/* Right: Icons and Date */}
+            <div className="flex items-center gap-6">
+              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]">
+                <Search className="w-6 h-6" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-500">
-                <Bell className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]">
+                <Bell className="w-6 h-6" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-500">
-                <Calendar className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]">
+                <Calendar className="w-6 h-6" />
               </Button>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-800">Tuesday</p>
-                <p className="text-xs text-gray-500">20/06/2023</p>
+                <p className="text-base font-semibold text-gray-800">{currentDate.split(",")[0]}</p>
+                <p className="text-sm text-gray-500">{currentDate.split(",")[1]}</p>
               </div>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 flex flex-col items-center px-4 py-10 bg-[#F7F8FA]">
+          <div className="w-full max-w-7xl">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-8 flex items-center gap-3">
+              Welcome back, Sundar <span className="text-3xl">👋</span>
+            </h2>
+            {/* The rest of the dashboard content remains unchanged, but you can add more padding/shadow to cards as needed */}
+          </div>
           {currentView === "dashboard" && renderDashboardContent()}
           {currentView === "my-task" && renderMyTasksContent()}
           {currentView === "vital-task" && (
@@ -581,29 +530,28 @@ export default function Dashboard() {
             </div>
           )}
         </main>
+
+        {/* Modals */}
+        <TaskModal
+          isOpen={isTaskModalOpen}
+          onClose={() => {
+            setIsTaskModalOpen(false)
+            setEditingTask(null)
+          }}
+          onSave={handleSaveTask}
+          task={editingTask}
+        />
+        <TaskDetailModal
+          isOpen={isTaskDetailOpen}
+          onClose={() => {
+            setIsTaskDetailOpen(false)
+            setSelectedTask(null)
+          }}
+          task={selectedTask}
+          onEdit={handleEditTask}
+          onDelete={handleDeleteTask}
+        />
       </div>
-
-      {/* Modals */}
-      <TaskModal
-        isOpen={isTaskModalOpen}
-        onClose={() => {
-          setIsTaskModalOpen(false)
-          setEditingTask(null)
-        }}
-        onSave={handleSaveTask}
-        task={editingTask}
-      />
-
-      <TaskDetailModal
-        isOpen={isTaskDetailOpen}
-        onClose={() => {
-          setIsTaskDetailOpen(false)
-          setSelectedTask(null)
-        }}
-        task={selectedTask}
-        onEdit={handleEditTask}
-        onDelete={handleDeleteTask}
-      />
     </div>
   )
 }

@@ -30,39 +30,36 @@ export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
   ]
 
   return (
-    <div className="w-80 sidebar-gradient text-white flex flex-col">
+    <aside className="w-80 min-h-screen bg-[#FF5A5F] flex flex-col items-center py-10 shadow-lg">
       {/* User Profile */}
-      <div className="p-6 border-b border-red-400">
-        <div className="flex items-center space-x-4">
-          <img
-            src={user.avatar || "/placeholder.svg"}
-            alt={user.name}
-            className="w-16 h-16 rounded-full border-3 border-white"
-          />
-          <div>
-            <h3 className="font-semibold text-lg">{user.name}</h3>
-            <p className="text-red-100 text-sm">{user.email}</p>
-          </div>
-        </div>
+      <div className="flex flex-col items-center mb-10">
+        <img
+          src={user.avatar || "/placeholder.svg"}
+          alt={user.name}
+          className="w-24 h-24 rounded-full border-4 border-white shadow-md mb-4"
+        />
+        <h3 className="font-bold text-xl text-white mb-1">{user.name}</h3>
+        <p className="text-red-100 text-base">{user.email}</p>
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 py-6">
-        <div className="space-y-2 px-4">
+      <nav className="flex-1 w-full">
+        <div className="flex flex-col gap-3 px-6">
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = currentView === item.id
-
             return (
               <Button
                 key={item.id}
                 onClick={() => onViewChange(item.id)}
                 variant="ghost"
-                className={`w-full justify-start text-left py-3 px-4 rounded-xl transition-all ${
-                  isActive ? "bg-white text-red-500 shadow-lg" : "text-white hover:bg-red-400 hover:bg-opacity-50"
+                className={`flex items-center gap-4 w-full py-4 px-5 rounded-2xl text-lg font-semibold transition-all ${
+                  isActive
+                    ? "bg-white text-[#FF5A5F] shadow-xl border-2 border-[#FF5A5F]"
+                    : "text-white hover:bg-[#ff7a7f] hover:bg-opacity-80"
                 }`}
               >
-                <Icon className="w-5 h-5 mr-3" />
+                <Icon className="w-7 h-7" />
                 {item.label}
               </Button>
             )
@@ -71,16 +68,16 @@ export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-red-400">
+      <div className="w-full px-6 mt-10 mb-2">
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full justify-start text-left py-3 px-4 rounded-xl text-white hover:bg-red-400 hover:bg-opacity-50"
+          className="flex items-center gap-4 w-full py-4 px-5 rounded-2xl text-lg font-semibold text-white hover:bg-[#ff7a7f] hover:bg-opacity-80"
         >
-          <LogOut className="w-5 h-5 mr-3" />
+          <LogOut className="w-7 h-7" />
           Logout
         </Button>
       </div>
-    </div>
+    </aside>
   )
 }
