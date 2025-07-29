@@ -7,6 +7,12 @@ import TaskDetailModal from "./task-detail-modal"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search, Bell, Calendar, Plus, Users } from "lucide-react"
+import AccountInfo from "./account-info"
+import ChangePassword from "./change-password"
+import TaskCategories from "./task-categories"
+import InviteMemberModal from "./invite-member-modal"
+import NotificationsPopup from "./notifications-popup"
+import CalendarPopup from "./calendar-popup"
 
 interface Task {
   id: string
@@ -78,6 +84,10 @@ export default function Dashboard() {
       createdAt: "2023-06-18",
     },
   ])
+  const [settingsView, setSettingsView] = useState<"main" | "change-password">("main")
+  const [isInviteOpen, setIsInviteOpen] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [showCalendar, setShowCalendar] = useState(false)
 
   const handleTaskClick = (task: Task) => {
     setSelectedTask(task)
@@ -458,12 +468,15 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#F7F8FA] flex">
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} />
+      <Sidebar currentView={currentView} onViewChange={id => {
+        setCurrentView(id)
+        if (id === "settings") setSettingsView("main")
+      }} />
 
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
         <header className="w-full bg-white shadow-md px-0 py-0 sticky top-0 z-10">
-          <div className="flex items-center justify-between max-w-7xl mx-auto px-10 py-4">
+          <div className="flex items-center justify-between max-w-7xl mx-auto px-10 py-4 relative">
             {/* Left: Logo/Title */}
             <h1 className="text-3xl font-bold">
               <span className="text-[#FF5A5F]">Dash</span>
@@ -477,15 +490,17 @@ export default function Dashboard() {
               </div>
             </div>
             {/* Right: Icons and Date */}
-            <div className="flex items-center gap-6">
-              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]">
-                <Search className="w-6 h-6" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]">
+            <div className="flex items-center gap-6 relative">
+              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]" onClick={() => { setShowNotifications(v => !v); setShowCalendar(false) }}>
                 <Bell className="w-6 h-6" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]">
+              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]" onClick={() => { setShowCalendar(v => !v); setShowNotifications(false) }}>
                 <Calendar className="w-6 h-6" />
+              </Button>
+              {showNotifications && <NotificationsPopup onClose={() => setShowNotifications(false)} />}
+              {showCalendar && <CalendarPopup onClose={() => setShowCalendar(false)} />}
+              <Button className="bg-[#FF5A5F] text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2" onClick={() => setIsInviteOpen(true)}>
+                <span className="hidden md:inline">Invite</span>
               </Button>
               <div className="text-right">
                 <p className="text-base font-semibold text-gray-800">{currentDate.split(",")[0]}</p>
@@ -512,16 +527,17 @@ export default function Dashboard() {
             </div>
           )}
           {currentView === "task-categories" && (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Task Categories</h2>
-              <p className="text-gray-600">Organize your tasks by categories</p>
-            </div>
+            <TaskCategories />
           )}
           {currentView === "settings" && (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Settings</h2>
-              <p className="text-gray-600">Manage your account settings</p>
-            </div>
+            settingsView === "main" ? (
+              <AccountInfo
+                onChangePassword={() => setSettingsView("change-password")}
+                onGoBack={() => setCurrentView("dashboard")}
+              />
+            ) : (
+              <ChangePassword onGoBack={() => setSettingsView("main")} />
+            )
           )}
           {currentView === "help" && (
             <div className="text-center py-12">
@@ -551,6 +567,7 @@ export default function Dashboard() {
           onEdit={handleEditTask}
           onDelete={handleDeleteTask}
         />
+        {isInviteOpen && <InviteMemberModal onClose={() => setIsInviteOpen(false)} />}
       </div>
     </div>
   )
