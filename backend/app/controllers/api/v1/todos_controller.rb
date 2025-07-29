@@ -1,9 +1,9 @@
 class Api::V1::TodosController < ApplicationController
-
+    include Authentication
     before_action :set_todo, only: [:show, :update, :destroy]
     
     def index
-        todos = Todo.all
+        todos = current_user.todos.all
 
         if params[:status].present? && Todo::STATUSES.include?(params[:status])
             todos = todos.public_send(params[:status])
@@ -22,7 +22,7 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def create
-        todo = Todo.new(todo_params)
+        todo = current_user.todos.new(todo_params)
 
         if todo.save
             render json: { success: true, data: todo }, status: :created
@@ -54,8 +54,8 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def set_todo
-        @todo = Todo.find(params[:id])
-        rescue Mongoid::Errors::DocumentNotFound 
-            render json: { success: false, error: "Todo not found" }, status: :not_found
+        @todo = current_user.todos.find(params[:id])
+    rescue Mongoid::Errors::DocumentNotFound 
+        render json: { success: false, error: "Todo not found" }, status: :not_found
     end
 end
