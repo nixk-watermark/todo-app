@@ -3,9 +3,8 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { User, Lock, Facebook, Chrome } from "lucide-react"
-
+import { User, Lock} from "lucide-react"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 interface LoginPageProps {
   onLogin: () => void
 }
@@ -13,19 +12,23 @@ interface LoginPageProps {
 export default function LoginPage({ onLogin }: LoginPageProps) {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [rememberMe, setRememberMe] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     // Simulate login
-    localStorage.setItem("authToken", "dummy-token")
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        username: username || "Sundar Gurung",
-        email: "sundargurung360@gmail.com",
-      }),
-    )
+    const response = await fetch(`${API_BASE_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({user : { username, password }}),
+    })
+    if (!response.ok) {
+      throw new Error("Failed to login")
+    }
+    const response_payload = await response.json()
+    localStorage.setItem("token", response_payload.data.token)
+    localStorage.setItem("user", JSON.stringify(response_payload.data.user.username))
     onLogin()
   }
 
@@ -60,17 +63,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 />
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                />
-                <label htmlFor="remember" className="text-gray-600 font-medium">
-                  Remember Me
-                </label>
-              </div>
-
               <Button
                 type="submit"
                 className="w-full bg-red-400 hover:bg-red-500 text-white py-3 text-lg font-semibold rounded-xl"
@@ -78,21 +70,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 Login
               </Button>
             </form>
-
-            <div className="mt-8">
-              <p className="text-gray-600 mb-4">Or, Login with</p>
-              <div className="flex space-x-4">
-                <Button variant="outline" size="icon" className="w-12 h-12 rounded-xl bg-transparent">
-                  <Facebook className="w-6 h-6 text-blue-600" />
-                </Button>
-                <Button variant="outline" size="icon" className="w-12 h-12 rounded-xl bg-transparent">
-                  <Chrome className="w-6 h-6 text-red-500" />
-                </Button>
-                <Button variant="outline" size="icon" className="w-12 h-12 rounded-xl bg-transparent">
-                  <div className="w-6 h-6 bg-black rounded-sm"></div>
-                </Button>
-              </div>
-            </div>
 
             <p className="mt-8 text-gray-600">
               {"Don't have an account? "}

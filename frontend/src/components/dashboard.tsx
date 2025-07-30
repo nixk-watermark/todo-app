@@ -1,119 +1,68 @@
-"use client"
-
 import { useState } from "react"
 import Sidebar from "./sidebar"
 import TaskModal from "./task-modal"
-import TaskDetailModal from "./task-detail-modal"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, Bell, Calendar, Plus, Users } from "lucide-react"
+import { Search, Plus} from "lucide-react"
 import AccountInfo from "./account-info"
 import ChangePassword from "./change-password"
-import TaskCategories from "./task-categories"
-import InviteMemberModal from "./invite-member-modal"
-import NotificationsPopup from "./notifications-popup"
-import CalendarPopup from "./calendar-popup"
-
-interface Task {
-  id: string
-  title: string
-  description: string
-  status: "ongoing" | "completed" | "not_started"
-  deadline: string
-  priority: "low" | "moderate" | "extreme"
-  image?: string
-  createdAt: string
-}
+import { useEffect } from "react"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export default function Dashboard() {
   const [currentView, setCurrentView] = useState("dashboard")
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
   const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false)
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
-  const [editingTask, setEditingTask] = useState<Task | null>(null)
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Attend Nischal's Birthday Party",
-      description: "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
-      status: "not_started",
-      deadline: "2023-06-20",
-      priority: "moderate",
-      image: "/placeholder.svg?height=100&width=100",
-      createdAt: "2023-06-20",
-    },
-    {
-      id: "2",
-      title: "Landing Page Design for TravelDays",
-      description: "Get the work done by EOD and discuss with client before leaving. (4 PM | Meeting Room)",
-      status: "ongoing",
-      deadline: "2023-06-20",
-      priority: "moderate",
-      image: "/placeholder.svg?height=100&width=100",
-      createdAt: "2023-06-20",
-    },
-    {
-      id: "3",
-      title: "Presentation on Final Product",
-      description:
-        "Make sure everything is functioning and all the necessities are properly met. Prepare the team and get the documents ready for...",
-      status: "ongoing",
-      deadline: "2023-06-19",
-      priority: "moderate",
-      image: "/placeholder.svg?height=100&width=100",
-      createdAt: "2023-06-19",
-    },
-    {
-      id: "4",
-      title: "Walk the dog",
-      description: "Take the dog to the park and bring treats as well.",
-      status: "completed",
-      deadline: "2023-06-18",
-      priority: "low",
-      image: "/placeholder.svg?height=100&width=100",
-      createdAt: "2023-06-18",
-    },
-    {
-      id: "5",
-      title: "Conduct meeting",
-      description: "Meet with the client and finalize requirements.",
-      status: "completed",
-      deadline: "2023-06-18",
-      priority: "moderate",
-      image: "/placeholder.svg?height=100&width=100",
-      createdAt: "2023-06-18",
-    },
-  ])
+  const [selectedTask, setSelectedTask] = useState<any | null>(null)
+  const [editingTask, setEditingTask] = useState<any | null>(null)
+  const [tasks, setTasks] = useState<any[]>([])
   const [settingsView, setSettingsView] = useState<"main" | "change-password">("main")
   const [isInviteOpen, setIsInviteOpen] = useState(false)
-  const [showNotifications, setShowNotifications] = useState(false)
-  const [showCalendar, setShowCalendar] = useState(false)
+  const [user] = useState({name: JSON.parse(localStorage.getItem("user") || "test")})
 
-  const handleTaskClick = (task: Task) => {
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const response = await fetch(`${API_BASE_URL}/todos`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      })
+      if (!response.ok) {
+        throw new Error("Failed to fetch tasks")
+      }
+      const response_payload = await response.json()
+      setTasks(response_payload.data)
+      console.log("Response", response_payload.data)
+    }
+    fetchTasks()
+    console.log("Tasks", tasks);
+  }, [])
+
+  const handleTaskClick = (task: any) => {
     setSelectedTask(task)
     setIsTaskDetailOpen(true)
   }
 
-  const handleEditTask = (task: Task) => {
+  const handleEditTask = (task: any) => {
     setEditingTask(task)
     setIsTaskModalOpen(true)
   }
 
-  const handleSaveTask = (taskData: Partial<Task>) => {
+  const handleSaveTask = (taskData: any) => {
     if (editingTask) {
       // Update existing task
       setTasks(tasks.map((task) => (task.id === editingTask.id ? { ...task, ...taskData } : task)))
       setEditingTask(null)
     } else {
       // Create new task
-      const newTask: Task = {
+      const newTask: any = {
         id: Date.now().toString(),
         title: taskData.title || "",
         description: taskData.description || "",
-        status: "not_started",
+        status: "pending",
         deadline: taskData.deadline || new Date().toISOString().split("T")[0],
         priority: taskData.priority || "low",
-        image: taskData.image,
         createdAt: new Date().toISOString().split("T")[0],
       }
       setTasks([...tasks, newTask])
@@ -121,16 +70,26 @@ export default function Dashboard() {
     setIsTaskModalOpen(false)
   }
 
-  const handleDeleteTask = (taskId: string) => {
-    setTasks(tasks.filter((task) => task.id !== taskId))
-    setIsTaskDetailOpen(false)
+  const handleDeleteTask = async (taskId: string) => {
+    const response = await fetch(`${API_BASE_URL}/todos/${taskId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    if(response.ok){
+      setTasks(tasks.filter((task) => task._id !== taskId))
+      setIsTaskDetailOpen(false)
+      setSelectedTask(null)
+    }
   }
 
   const getTaskStats = () => {
     const total = tasks.length
     const completed = tasks.filter((t) => t.status === "completed").length
     const inProgress = tasks.filter((t) => t.status === "ongoing").length
-    const notStarted = tasks.filter((t) => t.status === "not_started").length
+    const notStarted = tasks.filter((t) => t.status === "pending").length
 
     return {
       completed: total > 0 ? Math.round((completed / total) * 100) : 0,
@@ -138,6 +97,22 @@ export default function Dashboard() {
       notStarted: total > 0 ? Math.round((notStarted / total) * 100) : 0,
     }
   }
+
+  const getTimeAgo = (previousDate : any) => {
+    const now = new Date().getTime();
+    const past = new Date(previousDate).getTime();
+    const diffMs = now - past;
+
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+    if (seconds < 60) return `${seconds} seconds ago`;
+    if (minutes < 60) return `${minutes} minutes ago`;
+    if (hours < 24) return `${hours} hours ago`;
+    return `${days} days ago`;
+  };  
 
   const stats = getTaskStats()
   const currentDate = new Date().toLocaleDateString("en-US", {
@@ -148,20 +123,21 @@ export default function Dashboard() {
   })
 
   const renderDashboardContent = () => {
-    const todayTasks = tasks.filter((task) => task.createdAt === new Date().toISOString().split("T")[0])
+    const todayTasks = tasks.filter((task) => task.created_at.split('T')[0] === new Date().toISOString().split("T")[0])
+    console.log("TodayTasks", todayTasks)
     const completedTasks = tasks.filter((task) => task.status === "completed")
-
+    
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* To-Do Section */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-2xl">
+        {/* To-Do Section */} 
+        <div className="lg:col-span-2 rounded-3xl p-8 shadow-2xl bg-white">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-3">
               <div className="w-7 h-7 rounded border-2 border-gray-300"></div>
-              <h2 className="text-2xl font-bold text-gray-800">To-Do</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Todos</h2>
             </div>
             <div className="flex items-center space-x-6">
-              <span className="text-base text-gray-500">20 June • Today</span>
+              <span className="text-base text-gray-500"> { new Date().toLocaleDateString("en-US", {day: "2-digit", month: "long"}) } </span>
               <Button
                 onClick={() => setIsTaskModalOpen(true)}
                 variant="ghost"
@@ -173,7 +149,7 @@ export default function Dashboard() {
               </Button>
             </div>
           </div>
-          <div className="space-y-6">
+          <div className="space-y-6 overflow-y-auto max-h-[640px]">
             {todayTasks.map((task) => (
               <div
                 key={task.id}
@@ -185,19 +161,12 @@ export default function Dashboard() {
                   <p className="text-gray-600 text-base mb-3">{task.description}</p>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-4">
-                      <span className={`px-3 py-1 rounded-full font-semibold ${task.priority === "extreme" ? "bg-red-100 text-red-600" : task.priority === "moderate" ? "bg-blue-100 text-blue-600" : "bg-green-100 text-green-600"}`}>Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
-                      <span className={`px-3 py-1 rounded-full font-semibold ${task.status === "completed" ? "bg-green-100 text-green-600" : task.status === "ongoing" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}>Status: {task.status === "not_started" ? "Not Started" : task.status === "ongoing" ? "In Progress" : "Completed"}</span>
+                      <span className={`px-3 py-1 rounded-full font-semibold ${task.priority === "high" ? "bg-red-100 text-red-600" : task.priority === "medium" ? "bg-blue-100 text-blue-600" : "bg-green-100 text-green-600"}`}>Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
+                      <span className={`px-3 py-1 rounded-full font-semibold ${task.status === "completed" ? "bg-green-100 text-green-600" : task.status === "ongoing" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}>Status: {task.status === "pending" ? "Not Started" : task.status === "ongoing" ? "In Progress" : "Completed"}</span>
                     </div>
-                    <span className="text-gray-400">Created on: {task.createdAt}</span>
+                    <span className="text-gray-400">Created on: {new Date(task.created_at).toLocaleDateString("en-US", {day: "2-digit", month: "long", year: "numeric"})}</span>
                   </div>
                 </div>
-                {task.image && (
-                  <img
-                    src={task.image || "/placeholder.svg"}
-                    alt={task.title}
-                    className="w-20 h-20 rounded-xl object-cover ml-4"
-                  />
-                )}
               </div>
             ))}
           </div>
@@ -292,26 +261,27 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-gray-800">Completed Task</h2>
             </div>
             <div className="space-y-4">
-              {completedTasks.slice(0, 2).map((task) => (
-                <div key={task.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl shadow-md">
-                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mt-1">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
+              {completedTasks
+                .slice()
+                .sort((a, b) => {
+                  const dateA = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+                  const dateB = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+                  return dateB - dateA;
+                })
+                .slice(0, 2)
+                .map((task) => (
+                  <div key={task.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl shadow-md">
+                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mt-1">
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-800 text-lg">{task.title}</h4>
                     <p className="text-base text-gray-600 mt-1">{task.description}</p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-green-600 bg-green-100 px-3 py-1 rounded-full font-semibold">Status: Completed</span>
-                      <span className="text-xs text-gray-400">Completed 2 days ago</span>
+                      <span className="text-xs text-gray-400">{getTimeAgo(task.created_at)}</span>
                     </div>
                   </div>
-                  {task.image && (
-                    <img
-                      src={task.image || "/placeholder.svg"}
-                      alt={task.title}
-                      className="w-16 h-16 rounded-xl object-cover ml-4"
-                    />
-                  )}
                 </div>
               ))}
             </div>
@@ -323,14 +293,14 @@ export default function Dashboard() {
 
   const renderMyTasksContent = () => {
     const myTasks = tasks.filter((task) => task.status !== "completed")
-
+    
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="w-[90%] grid grid-cols-2 gap-6">
         {/* My Tasks List */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">My Tasks</h2>
 
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto max-h-[640px]">
             {myTasks.map((task) => (
               <div
                 key={task.id}
@@ -346,9 +316,9 @@ export default function Dashboard() {
                       <div className="flex items-center space-x-4">
                         <span
                           className={`px-2 py-1 rounded ${
-                            task.priority === "extreme"
+                            task.priority === "high"
                               ? "bg-red-100 text-red-600"
-                              : task.priority === "moderate"
+                              : task.priority === "medium"
                                 ? "bg-blue-100 text-blue-600"
                                 : "bg-green-100 text-green-600"
                           }`}
@@ -360,19 +330,12 @@ export default function Dashboard() {
                             task.status === "ongoing" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          Status: {task.status === "not_started" ? "Not Started" : "In Progress"}
+                          Status: {task.status === "pending" ? "Not Started" : "In Progress"}
                         </span>
                       </div>
                       <span className="text-gray-500">Created on: {task.createdAt}</span>
                     </div>
                   </div>
-                  {task.image && (
-                    <img
-                      src={task.image || "/placeholder.svg"}
-                      alt={task.title}
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                  )}
                 </div>
               </div>
             ))}
@@ -390,21 +353,13 @@ export default function Dashboard() {
                 </Button>
               </div>
 
-              {selectedTask.image && (
-                <img
-                  src={selectedTask.image || "/placeholder.svg"}
-                  alt={selectedTask.title}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
-                />
-              )}
-
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
                   <span
                     className={`px-3 py-1 rounded-full text-sm ${
-                      selectedTask.priority === "extreme"
+                      selectedTask.priority === "high"
                         ? "bg-red-100 text-red-600"
-                        : selectedTask.priority === "moderate"
+                        : selectedTask.priority === "medium"
                           ? "bg-blue-100 text-blue-600"
                           : "bg-green-100 text-green-600"
                     }`}
@@ -421,7 +376,7 @@ export default function Dashboard() {
                     }`}
                   >
                     Status:{" "}
-                    {selectedTask.status === "not_started"
+                    {selectedTask.status === "pending"
                       ? "Not Started"
                       : selectedTask.status === "ongoing"
                         ? "In Progress"
@@ -447,7 +402,7 @@ export default function Dashboard() {
                     Edit
                   </Button>
                   <Button
-                    onClick={() => handleDeleteTask(selectedTask.id)}
+                    onClick={() => handleDeleteTask(selectedTask._id)}
                     variant="outline"
                     className="text-red-500 border-red-500 hover:bg-red-50"
                   >
@@ -491,17 +446,6 @@ export default function Dashboard() {
             </div>
             {/* Right: Icons and Date */}
             <div className="flex items-center gap-6 relative">
-              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]" onClick={() => { setShowNotifications(v => !v); setShowCalendar(false) }}>
-                <Bell className="w-6 h-6" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-[#FF5A5F] bg-[#FFECEC] hover:bg-[#FFD6D6]" onClick={() => { setShowCalendar(v => !v); setShowNotifications(false) }}>
-                <Calendar className="w-6 h-6" />
-              </Button>
-              {showNotifications && <NotificationsPopup onClose={() => setShowNotifications(false)} />}
-              {showCalendar && <CalendarPopup onClose={() => setShowCalendar(false)} />}
-              <Button className="bg-[#FF5A5F] text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2" onClick={() => setIsInviteOpen(true)}>
-                <span className="hidden md:inline">Invite</span>
-              </Button>
               <div className="text-right">
                 <p className="text-base font-semibold text-gray-800">{currentDate.split(",")[0]}</p>
                 <p className="text-sm text-gray-500">{currentDate.split(",")[1]}</p>
@@ -514,7 +458,7 @@ export default function Dashboard() {
         <main className="flex-1 flex flex-col items-center px-4 py-10 bg-[#F7F8FA]">
           <div className="w-full max-w-7xl">
             <h2 className="text-4xl font-extrabold text-gray-900 mb-8 flex items-center gap-3">
-              Welcome back, Sundar <span className="text-3xl">👋</span>
+              Welcome back, {user.name.charAt(0).toUpperCase() + user.name.slice(1)} <span className="text-3xl">👋</span>
             </h2>
             {/* The rest of the dashboard content remains unchanged, but you can add more padding/shadow to cards as needed */}
           </div>
@@ -525,9 +469,6 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Vital Tasks</h2>
               <p className="text-gray-600">High priority tasks will appear here</p>
             </div>
-          )}
-          {currentView === "task-categories" && (
-            <TaskCategories />
           )}
           {currentView === "settings" && (
             settingsView === "main" ? (
@@ -557,17 +498,6 @@ export default function Dashboard() {
           onSave={handleSaveTask}
           task={editingTask}
         />
-        <TaskDetailModal
-          isOpen={isTaskDetailOpen}
-          onClose={() => {
-            setIsTaskDetailOpen(false)
-            setSelectedTask(null)
-          }}
-          task={selectedTask}
-          onEdit={handleEditTask}
-          onDelete={handleDeleteTask}
-        />
-        {isInviteOpen && <InviteMemberModal onClose={() => setIsInviteOpen(false)} />}
       </div>
     </div>
   )

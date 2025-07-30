@@ -9,7 +9,7 @@ export default function Home() {
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("authToken")
+    const token = localStorage.getItem("token")
     setIsAuthenticated(!!token)
     setIsLoading(false)
   }, [])
