@@ -17,25 +17,5 @@ class Todo
   validates :title, presence: true
   validates :status, presence: true, inclusion: { in: STATUSES }
   validates :priority, inclusion: { in: PRIORITIES }
-
-  # Scopes
-  STATUSES.each do |status|
-    scope status.to_sym, -> { where(status: status) }
-  end
-
-  PRIORITIES.each do |priority|
-    scope priority.to_sym, -> { where(priority: priority) }
-  end
-
-  # Helper methods
-  STATUSES.each do |status|
-    define_method("#{status}?") { self.status == status }
-    define_method("#{status}!") { update(status: status) }
-  end
-
-  PRIORITIES.each do |priority|
-    define_method("#{priority}_priority?") { self.priority == priority }
-    define_method("#{priority}_priority!") { update(priority: priority) }
-  end
-
+  
 end

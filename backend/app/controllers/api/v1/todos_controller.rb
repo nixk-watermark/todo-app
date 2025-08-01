@@ -3,15 +3,7 @@ class Api::V1::TodosController < ApplicationController
     before_action :set_todo, only: [:show, :update, :destroy]
     
     def index
-        todos = current_user.todos.all
-
-        if params[:status].present? && Todo::STATUSES.include?(params[:status])
-            todos = todos.public_send(params[:status])
-        end
-
-        if params[:priority].present? && Todo::PRIORITIES.include?(params[:priority])
-            todos = todos.public_send(params[:priority])
-        end
+        todos = current_user.todos.desc(:updated_at)
 
         render json: { success: true, data: todos }, status: :ok
     end
@@ -32,6 +24,8 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def update
+        puts "in update"
+        puts todo_params
         if @todo.update(todo_params)
             render json: { success: true, data: @todo }, status: :ok
         else
