@@ -1,16 +1,11 @@
-import { useState } from "react"
+
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, AlertTriangle, CheckSquare, List, Settings, HelpCircle, LogOut } from "lucide-react"
+import { LayoutDashboard, AlertTriangle, CheckSquare, Settings, LogOut } from "lucide-react"
 import profilePic from "../assets/user_profile.jpg"
-interface SidebarProps {
-  currentView: string
-  onViewChange: (view: string) => void
-}
 
-const userData = {name: JSON.parse(localStorage.getItem("user")!)}
 
-export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
-  const [user] = useState(userData)
+
+export default function Sidebar({ currentView, onViewChange, username}: any) {
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -23,7 +18,6 @@ export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
     { id: "vital-task", label: "Vital Task", icon: AlertTriangle },
     { id: "my-task", label: "My Task", icon: CheckSquare },
     { id: "settings", label: "Settings", icon: Settings },
-    { id: "help", label: "Help", icon: HelpCircle },
   ]
 
   return (
@@ -32,10 +26,10 @@ export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
       <div className="flex flex-col items-center mb-10">
         <img
           src={profilePic}
-          alt={user.name}
+          alt={username}
           className="w-24 h-24 rounded-full border-4 border-white shadow-md mb-4"
         />
-        <h3 className="font-bold text-xl text-white mb-1">{user.name.charAt(0).toUpperCase() + user.name.slice(1)}</h3>
+        <h3 className="font-bold text-xl text-white mb-1">{username}</h3>
       </div>
 
       {/* Navigation Menu */}

@@ -1,37 +1,26 @@
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { X, Calendar, Upload } from "lucide-react"
+import { X, Calendar} from "lucide-react"
 
-interface Task {
-  id: string
-  title: string
-  description: string
-  status: "ongoing" | "completed" | "not_started"
-  deadline: string
-  priority: "low" | "moderate" | "extreme"
-  image?: string
-  createdAt: string
-}
 
 interface TaskModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (task: Partial<Task>) => void
-  task?: Task | null
+  onSave: (task: any) => void
+  task?: any | null
 }
 
 export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [deadline, setDeadline] = useState("")
-  const [priority, setPriority] = useState<"low" | "moderate" | "extreme">("low")
-  const [image, setImage] = useState("")
+  const [priority, setPriority] = useState<"low" | "medium" | "high">("low")
+  const [status, setStatus] = useState<"pending" | "ongoing" | "completed">("pending")
 
   useEffect(() => {
     if (task) {
@@ -39,13 +28,13 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
       setDescription(task.description)
       setDeadline(task.deadline)
       setPriority(task.priority)
-      setImage(task.image || "")
+      setStatus(task.status)
     } else {
       setTitle("")
       setDescription("")
       setDeadline("")
       setPriority("low")
-      setImage("")
+      setStatus("pending")
     }
   }, [task, isOpen])
 
@@ -56,7 +45,7 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
       description,
       deadline,
       priority,
-      image: image || undefined,
+      status,
     })
   }
 
@@ -120,19 +109,19 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
                 <Label className="text-sm font-medium text-gray-700 mb-3 block">Priority</Label>
                 <RadioGroup
                   value={priority}
-                  onValueChange={(value) => setPriority(value as "low" | "moderate" | "extreme")}
+                  onValueChange={(value) => setPriority(value as "low" | "medium" | "high")}
                 >
                   <div className="flex items-center space-x-6">
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="extreme" id="extreme" className="text-red-500" />
-                      <Label htmlFor="extreme" className="text-red-500 font-medium">
-                        Extreme
+                      <RadioGroupItem value="high" id="high" className="text-red-500" />
+                      <Label htmlFor="high" className="text-red-500 font-medium">
+                        High
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="moderate" id="moderate" className="text-blue-500" />
-                      <Label htmlFor="moderate" className="text-blue-500 font-medium">
-                        Moderate
+                      <RadioGroupItem value="medium" id="medium" className="text-blue-500" />
+                      <Label htmlFor="medium" className="text-blue-500 font-medium">
+                        Medium
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -144,7 +133,39 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
                   </div>
                 </RadioGroup>
               </div>
+              {/* Status */}
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-3 block">Status</Label>
+                <RadioGroup
+                  value={status}
+                  onValueChange={(value) => setStatus(value as "pending" | "ongoing" | "completed")}
+                >
+                  <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="pending" id="pending" className="text-red-500" />
+                      <Label htmlFor="pending" className="text-red-500 font-medium">
+                        Pending
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="ongoing" id="ongoing" className="text-blue-500" />
+                      <Label htmlFor="ongoing" className="text-blue-500 font-medium">
+                        Ongoing
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="completed" id="completed" className="text-green-500" />
+                      <Label htmlFor="completed" className="text-green-500 font-medium">
+                        Completed
+                      </Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
 
+            {/* Right Column */}
+            <div>
               {/* Task Description */}
               <div>
                 <Label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2 block">
@@ -155,48 +176,10 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Start writing here..."
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 min-h-[120px] resize-none"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 min-h-[200px] resize-none"
                   required
                 />
               </div>
-            </div>
-
-            {/* Right Column */}
-            <div>
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">Upload Image</Label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Upload className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <div>
-                    <p className="text-gray-500 mb-2">Drag&Drop files here</p>
-                    <p className="text-gray-400 text-sm mb-4">or</p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="text-gray-600 border-gray-300 hover:bg-gray-50 bg-transparent"
-                      onClick={() => {
-                        // Simulate file upload
-                        const imageUrl = `/placeholder.svg?height=200&width=200&query=${title || "task image"}`
-                        setImage(imageUrl)
-                      }}
-                    >
-                      Browse
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {image && (
-                <div className="mt-4">
-                  <img
-                    src={image || "/placeholder.svg"}
-                    alt="Task preview"
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                </div>
-              )}
             </div>
           </div>
 

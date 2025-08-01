@@ -27,6 +27,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       throw new Error("Failed to login")
     }
     const response_payload = await response.json()
+    console.log("signin", response_payload)
     localStorage.setItem("token", response_payload.data.token)
     localStorage.setItem("user", JSON.stringify(response_payload.data.user.username))
     onLogin()

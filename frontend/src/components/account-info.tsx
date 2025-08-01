@@ -1,14 +1,15 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import imageProfile from "@/assets/user_profile.jpg"
 
 export default function AccountInfo({ onChangePassword, onGoBack }: { onChangePassword: () => void; onGoBack?: () => void }) {
   const [user, setUser] = useState({
     avatar: "/placeholder.svg?height=80&width=80",
-    name: "Sundar Gurung",
-    email: "sundargurung360@gmail.com",
-    firstName: "Sundar",
-    lastName: "Gurung",
+    name: "John Doe",
+    email: "johndoe@gmail.com",
+    firstName: "John",
+    lastName: "Doe",
     contact: "",
     position: "",
   })
@@ -32,8 +33,11 @@ export default function AccountInfo({ onChangePassword, onGoBack }: { onChangePa
 
   return (
     <div className="w-full max-w-3xl mx-auto bg-[#F7F8FA] rounded-2xl shadow-xl p-10 mt-10">
+      <h1 className="text-2xl text-center font-bold text-red-800 mb-10 ">
+        This feature is yet to be added
+      </h1>
       <div className="flex items-center mb-8 gap-6">
-        <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-full border-4 border-white shadow-md" />
+        <img src={imageProfile} alt={user.name} className="w-20 h-20 rounded-full border-4 border-white shadow-md" />
         <div>
           <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
           <p className="text-gray-600">{user.email}</p>
