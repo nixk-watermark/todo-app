@@ -1,5 +1,7 @@
-#root {
-  /* Removed max-width, margin, padding, and text-align to allow full viewport usage for dashboard */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  overflow: auto;
 }
 
 .logo {
