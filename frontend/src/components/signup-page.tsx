@@ -6,18 +6,18 @@ import { Input } from "@/components/ui/input"
 import { User, Lock} from "lucide-react"
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 interface LoginPageProps {
-  onLogin: () => void
-  showSignup: () => void
+  onSignup: () => void
+  showLogin: () => void
 }
 
-export default function LoginPage({ onLogin, showSignup }: LoginPageProps) {
+export default function SignupPage({ onSignup, showLogin }: LoginPageProps) {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     // Simulate login
-    const response = await fetch(`${API_BASE_URL}/login`, {
+    const response = await fetch(`${API_BASE_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,10 +28,9 @@ export default function LoginPage({ onLogin, showSignup }: LoginPageProps) {
       throw new Error("Failed to login")
     }
     const response_payload = await response.json()
-    console.log("signin", response_payload)
     localStorage.setItem("token", response_payload.data.token)
     localStorage.setItem("user", JSON.stringify(response_payload.data.user.username))
-    onLogin()
+    onSignup()
   }
 
   return (
@@ -40,9 +39,9 @@ export default function LoginPage({ onLogin, showSignup }: LoginPageProps) {
         <div className="flex flex-col lg:flex-row">
           {/* Left side - Form */}
           <div className="lg:w-1/2 p-8 lg:p-12">
-            <h1 className="text-4xl font-bold text-gray-800 mb-8">Sign In</h1>
+            <h1 className="text-4xl font-bold text-gray-800 mb-8">Sign Up</h1>
 
-            <form onSubmit={handleLogin} className="space-y-6">
+            <form onSubmit={handleSignup} className="space-y-6">
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
@@ -69,13 +68,13 @@ export default function LoginPage({ onLogin, showSignup }: LoginPageProps) {
                 type="submit"
                 className="w-full bg-red-400 hover:bg-red-500 text-white py-3 text-lg font-semibold rounded-xl"
               >
-                Login
+                Signup
               </Button>
             </form>
 
             <p className="mt-8 text-gray-600">
-              {"Don't have an account? "}
-              <button onClick={showSignup} className="text-blue-500 hover:underline font-semibold">Create One</button>
+              {"Already have an account? "}
+              <button onClick={showLogin} className="text-blue-500 hover:underline font-semibold"> Sign in </button>
             </p>
           </div>
 
