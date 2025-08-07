@@ -66,7 +66,7 @@ export default function SignupPage({ onSignup, showLogin }: LoginPageProps) {
 
               <Button
                 type="submit"
-                className="w-full bg-red-400 hover:bg-red-500 text-white py-3 text-lg font-semibold rounded-xl"
+                className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-lg font-semibold rounded-xl"
               >
                 Signup
               </Button>
@@ -74,8 +74,18 @@ export default function SignupPage({ onSignup, showLogin }: LoginPageProps) {
 
             <p className="mt-8 text-gray-600">
               {"Already have an account? "}
-              <button onClick={showLogin} className="text-blue-500 hover:underline font-semibold"> Sign in </button>
+              <a
+                href="#login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  showLogin();
+                }}
+                className="text-blue-700 hover:underline font-semibold cursor-pointer"
+              >
+                Sign in
+              </a>
             </p>
+
           </div>
 
           {/* Right side - Illustration */}

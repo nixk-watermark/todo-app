@@ -183,7 +183,7 @@ export default function Dashboard() {
                 onClick={() => setIsTaskModalOpen(true)}
                 variant="ghost"
                 size="lg"
-                className="text-white bg-[#FF5A5F] hover:bg-[#ff7a7f] rounded-xl px-6 py-2 text-lg font-semibold shadow-md"
+                className="text-[#1A1A1A] bg-[#FF5A5F] hover:bg-[#ff7a7f] rounded-xl px-6 py-2 text-lg font-semibold shadow-md"
               >
                 <Plus className="w-5 h-5 mr-2" />
                 Add task
@@ -319,8 +319,10 @@ export default function Dashboard() {
                     <h4 className="font-semibold text-gray-800 text-lg">{task.title}</h4>
                     <p className="text-base text-gray-600 mt-1">{task.description}</p>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-green-600 bg-green-100 px-3 py-1 rounded-full font-semibold">Status: Completed</span>
-                      <span className="text-xs text-gray-400">{getTimeAgo(task.created_at)}</span>
+                    <span className="text-xs text-green-900 bg-green-200 px-3 py-1 rounded-full font-semibold">
+                      Status: Completed
+                    </span>
+                      <span className="text-xs text-green-900">{getTimeAgo(task.created_at)}</span>
                     </div>
                   </div>
                 </div>
@@ -340,7 +342,12 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl p-6 shadow-sm border">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">My Tasks</h2>
 
-          <div className="space-y-4 overflow-y-auto max-h-[640px]">
+          <div
+            className="space-y-4 overflow-y-auto max-h-[640px]"
+            tabIndex={0}             
+            aria-label="Scrollable content area"  
+            role="region"            
+          >    
             {tasks.map((task) => (
               <div
                 key={task._id}
@@ -357,23 +364,32 @@ export default function Dashboard() {
                         <span
                           className={`px-2 py-1 rounded ${
                             task.priority === "high"
-                              ? "bg-red-100 text-red-600"
+                              ? "bg-red-50 text-red-800"
                               : task.priority === "medium"
-                                ? "bg-blue-100 text-blue-600"
-                                : "bg-green-100 text-green-600"
+                                ? "bg-blue-50 text-blue-800"
+                                : "bg-green-50 text-green-900"
                           }`}
                         >
                           Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                         </span>
                         <span
                           className={`px-2 py-1 rounded ${
-                            task.status === "ongoing" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
+                            task.status === "ongoing"
+                              ? "bg-blue-50 text-blue-800"
+                              : "bg-gray-50 text-gray-800"
                           }`}
                         >
                           Status: {task.status === "pending" ? "Not Started" : "In Progress"}
                         </span>
                       </div>
-                      <span className="text-gray-500">Updated on: {new Date(task.created_at).toLocaleDateString("en-US", {day: "2-digit", month: "long", year: "numeric"})}</span>
+                      <span className="text-gray-500">
+                        Updated on:{" "}
+                        {new Date(task.created_at).toLocaleDateString("en-US", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -398,10 +414,10 @@ export default function Dashboard() {
                   <span
                     className={`px-3 py-1 rounded-full text-sm ${
                       selectedTask.priority === "high"
-                        ? "bg-red-100 text-red-600"
+                        ? "bg-red-50 text-red-800"
                         : selectedTask.priority === "medium"
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-green-100 text-green-600"
+                          ? "bg-blue-50 text-blue-800"
+                          : "bg-green-50 text-green-900"
                     }`}
                   >
                     Priority: {selectedTask.priority.charAt(0).toUpperCase() + selectedTask.priority.slice(1)}
@@ -409,10 +425,10 @@ export default function Dashboard() {
                   <span
                     className={`px-3 py-1 rounded-full text-sm ${
                       selectedTask.status === "completed"
-                        ? "bg-green-100 text-green-600"
+                        ? "bg-green-50 text-green-900"
                         : selectedTask.status === "ongoing"
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-gray-100 text-gray-600"
+                          ? "bg-blue-50 text-blue-800"
+                          : "bg-gray-50 text-gray-800"
                     }`}
                   >
                     Status:{" "}
@@ -435,19 +451,19 @@ export default function Dashboard() {
                 </div>
 
                 <div className="flex space-x-2 pt-4">
-                  <Button
-                    onClick={() => handleEditTask(selectedTask)}
-                    className="bg-red-500 hover:bg-red-600 text-white"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDeleteTask(selectedTask._id)}
-                    variant="outline"
-                    className="text-red-500 border-red-500 hover:bg-red-50"
-                  >
-                    Delete
-                  </Button>
+                <Button
+                  onClick={() => handleEditTask(selectedTask)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold shadow-md transition-colors"
+                >
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => handleDeleteTask(selectedTask._id)}
+                  variant="outline"
+                  className="text-red-600 border-red-600 hover:bg-red-100 hover:text-red-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+                >
+                  Delete
+                </Button>
                 </div>
               </div>
             </div>
@@ -486,17 +502,20 @@ export default function Dashboard() {
                         <span
                           className={`px-2 py-1 rounded ${
                             task.priority === "high"
-                              ? "bg-red-100 text-red-600"
+                              ? "bg-red-200 text-red-800"       // darker text and slightly stronger bg red
                               : task.priority === "medium"
-                                ? "bg-blue-100 text-blue-600"
-                                : "bg-green-100 text-green-600"
+                              ? "bg-blue-200 text-blue-800"     // darker blue text, stronger bg
+                              : "bg-green-200 text-green-800"   // darker green text, stronger bg
                           }`}
                         >
                           Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                         </span>
+
                         <span
                           className={`px-2 py-1 rounded ${
-                            task.status === "ongoing" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
+                            task.status === "ongoing"
+                              ? "bg-blue-200 text-blue-800"     // stronger blue for ongoing
+                              : "bg-gray-200 text-gray-800"     // darker gray bg + text for pending
                           }`}
                         >
                           Status: {task.status === "pending" ? "Not Started" : "In Progress"}
@@ -523,25 +542,28 @@ export default function Dashboard() {
               </div>
 
               <div className="space-y-4">
+                
+
                 <div className="flex items-center space-x-4">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm ${
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
                       selectedTask.priority === "high"
-                        ? "bg-red-100 text-red-600"
+                        ? "bg-red-200 text-red-800"
                         : selectedTask.priority === "medium"
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-green-100 text-green-600"
+                          ? "bg-blue-200 text-blue-800"
+                          : "bg-green-200 text-green-800"
                     }`}
                   >
                     Priority: {selectedTask.priority.charAt(0).toUpperCase() + selectedTask.priority.slice(1)}
                   </span>
+
                   <span
-                    className={`px-3 py-1 rounded-full text-sm ${
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
                       selectedTask.status === "completed"
-                        ? "bg-green-100 text-green-600"
+                        ? "bg-green-700 text-white"
                         : selectedTask.status === "ongoing"
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-gray-100 text-gray-600"
+                          ? "bg-blue-200 text-blue-800"
+                          : "bg-gray-200 text-gray-800"
                     }`}
                   >
                     Status:{" "}
@@ -562,19 +584,18 @@ export default function Dashboard() {
                   <h3 className="font-semibold text-gray-800 mb-2">Deadline:</h3>
                   <p className="text-gray-600">{selectedTask.deadline}</p>
                 </div>
-                
-
                 <div className="flex space-x-2 pt-4">
                   <Button
                     onClick={() => handleEditTask(selectedTask)}
-                    className="bg-red-500 hover:bg-red-600 text-white"
+                    className="bg-red-600 hover:bg-red-700 text-white"
                   >
                     Edit
                   </Button>
+
                   <Button
                     onClick={() => handleDeleteTask(selectedTask._id)}
                     variant="outline"
-                    className="text-red-500 border-red-500 hover:bg-red-50"
+                    className="text-red-700 border-red-700 hover:bg-red-100"
                   >
                     Delete
                   </Button>

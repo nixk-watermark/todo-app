@@ -48,10 +48,9 @@ export default function Sidebar({ currentView, onViewChange, username}: any) {
                 variant="ghost"
                 className={`flex items-center gap-4 w-full py-4 px-5 rounded-2xl text-lg font-semibold transition-all ${
                   isActive
-                    ? "bg-white text-[#FF5A5F] shadow-xl border-2 border-[#FF5A5F]"
-                    : "text-white hover:bg-[#ff7a7f] hover:bg-opacity-80"
-                }`}
-              >
+                    ? "bg-white text-[#E00007] shadow-xl border-2 border-[#E00007]"
+                    : "text-[#1A1A1A] hover:bg-[#FFD1D3] hover:bg-opacity-100"
+                }`}>
                 <Icon className="w-7 h-7" />
                 {item.label}
               </Button>
@@ -65,7 +64,7 @@ export default function Sidebar({ currentView, onViewChange, username}: any) {
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="flex items-center gap-4 w-full py-4 px-5 rounded-2xl text-lg font-semibold text-white hover:bg-[#ff7a7f] hover:bg-opacity-80"
+          className="flex items-center gap-4 w-full py-4 px-5 rounded-2xl text-lg font-semibold text-[#1A1A1A] hover:bg-[#FFD1D3] hover:bg-opacity-100"
         >
           <LogOut className="w-7 h-7" />
           Logout

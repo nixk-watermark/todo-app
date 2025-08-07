@@ -51,41 +51,71 @@ export default function AccountInfo({ onChangePassword, onGoBack }: { onChangePa
         </div>
       </div>
       <div className="bg-white rounded-xl p-8 border">
-        <form className="space-y-6" onSubmit={e => { e.preventDefault(); handleSave() }}>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">First Name</label>
-            <Input name="firstName" value={form.firstName} onChange={handleChange} disabled={!editing} />
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
-            <Input name="lastName" value={form.lastName} onChange={handleChange} disabled={!editing} />
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Email Address</label>
-            <Input name="email" value={form.email} onChange={handleChange} disabled={!editing} />
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Contact Number</label>
-            <Input name="contact" value={form.contact} onChange={handleChange} disabled={!editing} />
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Position</label>
-            <Input name="position" value={form.position} onChange={handleChange} disabled={!editing} />
-          </div>
-          <div className="flex gap-4 mt-8">
-            {editing ? (
-              <>
-                <Button type="submit" className="bg-[#FF5A5F] text-white">Save Changes</Button>
-                <Button type="button" variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
-              </>
-            ) : (
-              <>
-                <Button type="button" className="bg-[#FF5A5F] text-white" onClick={() => setEditing(true)}>Update Info</Button>
-                <Button type="button" variant="outline" onClick={onChangePassword}>Change Password</Button>
-              </>
-            )}
-          </div>
-        </form>
+        
+
+      <form className="space-y-6" onSubmit={e => { e.preventDefault(); handleSave() }}>
+  <div>
+    <label htmlFor="firstName" className="block text-gray-700 font-semibold mb-1">First Name</label>
+    <Input id="firstName" name="firstName" value={form.firstName} onChange={handleChange} disabled={!editing} />
+  </div>
+  <div>
+    <label htmlFor="lastName" className="block text-gray-700 font-semibold mb-1">Last Name</label>
+    <Input id="lastName" name="lastName" value={form.lastName} onChange={handleChange} disabled={!editing} />
+  </div>
+  <div>
+    <label htmlFor="email" className="block text-gray-700 font-semibold mb-1">Email Address</label>
+    <Input id="email" name="email" value={form.email} onChange={handleChange} disabled={!editing} />
+  </div>
+  <div>
+    <label htmlFor="contact" className="block text-gray-700 font-semibold mb-1">Contact Number</label>
+    <Input id="contact" name="contact" value={form.contact} onChange={handleChange} disabled={!editing} />
+  </div>
+  <div>
+    <label htmlFor="position" className="block text-gray-700 font-semibold mb-1">Position</label>
+    <Input id="position" name="position" value={form.position} onChange={handleChange} disabled={!editing} />
+  </div>
+
+  <div className="flex gap-4 mt-8">
+    {editing ? (
+      <>
+        <Button
+          type="submit"
+          className="bg-[#CC2E32] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#b8292d] transition-colors"
+        >
+          Save Changes
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setEditing(false)}
+          className="border-[#BA1F24] text-[#BA1F24] px-6 py-2 rounded-lg font-semibold hover:bg-[#BA1F24] hover:text-white transition-colors"
+        >
+          Cancel
+        </Button>
+      </>
+    ) : (
+      <>
+        <Button
+          type="button"
+          className="bg-[#CC2E32] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#b8292d] transition-colors"
+          onClick={() => setEditing(true)}
+        >
+          Update Info
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onChangePassword}
+          className="border-[#BA1F24] text-[#BA1F24] px-6 py-2 rounded-lg font-semibold hover:bg-[#BA1F24] hover:text-white transition-colors"
+        >
+          Change Password
+        </Button>
+      </>
+    )}
+  </div>
+</form>
+
+
       </div>
     </div>
   )

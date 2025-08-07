@@ -61,7 +61,14 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
               <Button onClick={onClose} variant="outline" className="text-gray-600 hover:text-gray-800 bg-transparent">
                 Go Back
               </Button>
-              <Button onClick={onClose} variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
+             
+              <Button
+                onClick={onClose}
+                variant="ghost"
+                size="icon"
+                className="text-gray-400 hover:text-gray-600"
+                aria-label="Close"
+              >
                 <X className="w-5 h-5" />
               </Button>
             </div>
@@ -105,6 +112,7 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
               </div>
 
               {/* Priority */}
+              
               <div>
                 <Label className="text-sm font-medium text-gray-700 mb-3 block">Priority</Label>
                 <RadioGroup
@@ -112,27 +120,49 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
                   onValueChange={(value) => setPriority(value as "low" | "medium" | "high")}
                 >
                   <div className="flex items-center space-x-6">
+                    {/* High */}
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="high" id="high" className="text-red-500" />
-                      <Label htmlFor="high" className="text-red-500 font-medium">
+                      <RadioGroupItem
+                        value="high"
+                        id="high"
+                        className="text-red-600"
+                        aria-labelledby="label-high"
+                      />
+                      <Label id="label-high" htmlFor="high" className="text-red-600 font-medium">
                         High
                       </Label>
                     </div>
+
+                    {/* Medium */}
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="medium" id="medium" className="text-blue-500" />
-                      <Label htmlFor="medium" className="text-blue-500 font-medium">
+                      <RadioGroupItem
+                        value="medium"
+                        id="medium"
+                        className="text-blue-600"
+                        aria-labelledby="label-medium"
+                      />
+                      <Label id="label-medium" htmlFor="medium" className="text-blue-600 font-medium">
                         Medium
                       </Label>
                     </div>
+
+                    {/* Low */}
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="low" id="low" className="text-green-500" />
-                      <Label htmlFor="low" className="text-green-500 font-medium">
+                      <RadioGroupItem
+                        value="low"
+                        id="low"
+                        className="text-green-700"
+                        aria-labelledby="label-low"
+                      />
+                      <Label id="label-low" htmlFor="low" className="text-green-700 font-medium">
                         Low
                       </Label>
                     </div>
                   </div>
                 </RadioGroup>
               </div>
+
+
               {/* Status */}
               <div>
                 <Label className="text-sm font-medium text-gray-700 mb-3 block">Status</Label>
@@ -141,21 +171,26 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
                   onValueChange={(value) => setStatus(value as "pending" | "ongoing" | "completed")}
                 >
                   <div className="flex items-center space-x-6">
+                    {/* Pending */}
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="pending" id="pending" className="text-red-500" />
-                      <Label htmlFor="pending" className="text-red-500 font-medium">
+                      <RadioGroupItem value="pending" id="pending" className="text-red-600" />
+                      <Label htmlFor="pending" className="text-red-600 font-medium">
                         Pending
                       </Label>
                     </div>
+
+                    {/* Ongoing */}
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="ongoing" id="ongoing" className="text-blue-500" />
-                      <Label htmlFor="ongoing" className="text-blue-500 font-medium">
+                      <RadioGroupItem value="ongoing" id="ongoing" className="text-blue-600" />
+                      <Label htmlFor="ongoing" className="text-blue-600 font-medium">
                         Ongoing
                       </Label>
                     </div>
+
+                    {/* Completed */}
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="completed" id="completed" className="text-green-500" />
-                      <Label htmlFor="completed" className="text-green-500 font-medium">
+                      <RadioGroupItem value="completed" id="completed" className="text-green-700" />
+                      <Label htmlFor="completed" className="text-green-700 font-medium">
                         Completed
                       </Label>
                     </div>
@@ -185,9 +220,12 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
 
           {/* Submit Button */}
           <div className="mt-8 flex justify-start">
-            <Button type="submit" className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-lg font-medium">
-              Done
-            </Button>
+          <Button
+            type="submit"
+            className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-medium shadow-md"
+          >
+            Done
+          </Button>
           </div>
         </form>
       </div>
